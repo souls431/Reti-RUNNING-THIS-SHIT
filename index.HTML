@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCAMMERS | Workshop</title>
+    <meta name="description" content="A simple custom profile page with background video and music.">
+    <meta name="theme-color" content="#080808">
+
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@1&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Satoshi', sans-serif;
+            background-color: #080808;
+            color: #ff0000;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Background video (hidden at start) */
+        #backgroundVideo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            display: none; /* Hidden until click */
+        }
+
+        .click-to-enter {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 32px;
+            font-weight: bold;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #ff0000;
+            cursor: pointer;
+        }
+
+        .content {
+            display: none;
+            padding-top: 50px;
+        }
+
+        .device-info {
+            display: none;
+            padding: 20px;
+            background-color: #1c1c1c;
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Video (NO AUTOPLAY) -->
+    <video id="backgroundVideo" loop playsinline>
+        <source src="https://cdn.discordapp.com/attachments/1226817654162063361/1475985971727044638/0826.mp4?ex=699f7a8e&is=699e290e&hm=6641f1e784b68220c4400b10a508e22cf1de8a33da6da614595755a4af2466f1&" type="video/mp4">
+    </video>
+
+    <!-- Background Music -->
+    <audio id="backgroundMusic" src="https://cdn.discordapp.com/attachments/1226817654162063361/1475985973618675776/2024-08-26_14-51-07.mp3?ex=699f7a8e&is=699e290e&hm=fe3e1ab6a5adfbf69dce067ea8648e6bc3a98a27089388c69d70a527417c873a&"></audio>
+
+    <!-- Click Overlay -->
+    <div class="click-to-enter" onclick="enterSite()">
+        click to enter...
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1>YOU GOT SCAMMED HAHAHA</h1>
+        <p>Content loads after click.</p>
+    </div>
+
+    <!-- Device Info Section -->
+    <div class="device-info" id="deviceInfo">
+        <h2>Device Information:</h2>
+        <p><strong>IP Address:</strong> <span id="ipAddress"></span></p>
+        <p><strong>City:</strong> <span id="city"></span></p>
+        <p><strong>Region:</strong> <span id="region"></span></p>
+        <p><strong>Country:</strong> <span id="country"></span></p>
+        <p><strong>Location:</strong> <span id="location"></span></p>
+        <p><strong>User-Agent:</strong> <span id="userAgent"></span></p>
+    </div>
+
+<script>
+function enterSite() {
+    const overlay = document.querySelector('.click-to-enter');
+    const content = document.querySelector('.content');
+    const video = document.getElementById('backgroundVideo');
+    const music = document.getElementById('backgroundMusic');
+
+    // Hide overlay
+    overlay.style.display = 'none';
+
+    // Show content
+    content.style.display = 'block';
+
+    // Show video
+    video.style.display = 'block';
+
+    // Play video + audio together after click
+    Promise.all([
+        video.play(),
+        music.play()
+    ]).catch(error => {
+        console.log("Playback prevented:", error);
+    });
+
+    // Fetch IP + Geo info
+    fetch('https://api.ipgeolocation.io/ipgeo?apiKey=b72614fe04a640e296af9eab568e3b7d')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('deviceInfo').style.display = 'block';
+            document.getElementById('ipAddress').textContent = data.ip || "N/A";
+            document.getElementById('city').textContent = data.city || "N/A";
+            document.getElementById('region').textContent = data.state_prov || "N/A";
+            document.getElementById('country').textContent = data.country_name || "N/A";
+            document.getElementById('location').textContent =
+                data.latitude && data.longitude
+                    ? data.latitude + ", " + data.longitude
+                    : "N/A";
+            document.getElementById('userAgent').textContent = navigator.userAgent;
+        })
+        .catch(error => {
+            console.error('Error fetching device info:', error);
+        });
+}
+</script>
+
+</body>
+</html>
